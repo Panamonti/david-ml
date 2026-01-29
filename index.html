@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>David Montero López - Porfolio</title>
     <style>
         :root {
@@ -24,14 +24,14 @@
             background-color: white;
             color: var(--text-color);
             line-height: 1.6;
-            padding-top: 80px; /* Para compensar el header fijo en escritorio */
+            -webkit-text-size-adjust: 100%;
         }
         
-        /* Cabecera - Siempre fija */
+        /* ===== ENCABEZADO RESPONSIVO ===== */
         header {
             background-color: var(--header-color);
             color: white;
-            padding: 1.5rem 0;
+            padding: 1rem 0;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: fixed;
             top: 0;
@@ -44,32 +44,46 @@
             width: 90%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 15px;
         }
         
         .header-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: nowrap; /* Cambiado de wrap a nowrap */
+            height: 100%;
         }
         
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
         }
         
+        /* Botón hamburguesa para móvil */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 5px;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Navegación desktop */
         nav ul {
             display: flex;
             list-style: none;
-            flex-wrap: nowrap; /* Asegura que no se rompa */
-            margin: 0;
-            padding: 0;
-        }
-        
-        nav ul li {
-            margin-left: 1rem;
+            gap: 1rem;
         }
         
         nav ul li a {
@@ -77,11 +91,10 @@
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
-            padding: 0.5rem 0.8rem;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
             border: 2px solid transparent;
-            white-space: nowrap; /* Evita que se rompa el texto */
-            font-size: 0.95rem;
+            white-space: nowrap;
         }
         
         nav ul li a:hover,
@@ -90,26 +103,16 @@
             border-color: #a3c2ff;
         }
         
-        /* Menú hamburguesa para móvil */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-        
         /* Contenido principal */
         main {
-            margin-top: 40px;
+            margin-top: 70px;
+            min-height: calc(100vh - 200px);
         }
         
         /* Secciones */
         .section {
             display: none;
-            padding: 4rem 0;
+            padding: 3rem 0;
             animation: fadeIn 0.5s ease-in;
         }
         
@@ -124,10 +127,11 @@
         
         .section-title {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             color: var(--header-color);
             position: relative;
             padding-bottom: 0.5rem;
+            font-size: 2rem;
         }
         
         .section-title::after {
@@ -169,7 +173,8 @@
         
         .profile-img img {
             width: 100%;
-            height: 400px;
+            height: auto;
+            max-height: 400px;
             object-fit: cover;
             display: block;
         }
@@ -187,7 +192,7 @@
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 2.5rem;
+            padding: 2rem;
             margin-bottom: 2rem;
         }
         
@@ -199,7 +204,7 @@
         }
         
         .name {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: var(--header-color);
             margin-bottom: 0.5rem;
         }
@@ -208,7 +213,7 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-top: 1rem;
         }
         
@@ -216,17 +221,19 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-size: 0.9rem;
         }
         
         .cv-section {
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
         
         .cv-section h3 {
             color: var(--header-color);
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-color);
+            font-size: 1.3rem;
         }
         
         .cv-item {
@@ -243,11 +250,12 @@
         .cv-item h4 {
             color: var(--accent-color);
             margin-bottom: 0.3rem;
+            font-size: 1.1rem;
         }
         
         .date {
             color: #666;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0.5rem;
             display: inline-block;
             background-color: var(--light-bg);
@@ -266,7 +274,7 @@
             background-color: var(--light-bg);
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-left: 3px solid var(--accent-color);
             transition: transform 0.3s;
         }
@@ -275,7 +283,7 @@
             transform: translateY(-3px);
         }
         
-        /* Sección Porfolio - Misma estructura que el HTML proporcionado */
+        /* Sección Porfolio */
         .portfolio-pdf-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -306,12 +314,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent-color);
-            font-size: 4rem;
             cursor: pointer;
+            overflow: hidden;
         }
         
-        /* Imágenes en lugar de iconos */
         .pdf-preview img {
             width: 100%;
             height: 100%;
@@ -362,6 +368,7 @@
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             background-color: var(--accent-color);
             color: white;
@@ -373,6 +380,8 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
+            min-height: 44px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .btn:hover {
@@ -398,7 +407,7 @@
             background-color: #b71c1c;
         }
         
-        /* Modal para PDFs - Igual que el HTML proporcionado */
+        /* Modal para PDFs */
         .portfolio-pdf-modal {
             display: none;
             position: fixed;
@@ -449,7 +458,6 @@
             border: none;
         }
         
-        /* Mensaje de carga */
         .pdf-loading {
             display: none;
             text-align: center;
@@ -460,7 +468,7 @@
             display: block;
         }
         
-        /* Footer con fondo blanco */
+        /* Footer */
         footer {
             background-color: white;
             color: var(--text-color);
@@ -506,80 +514,131 @@
             color: #1a365d;
         }
         
-        /* Responsive - Mejorado para mantener header fijo */
-        @media (max-width: 992px) {
-            body {
-                padding-top: 120px; /* Más espacio para header más alto en móvil */
+        /* ===== RESPONSIVE PARA MÓVIL ===== */
+        @media screen and (max-width: 768px) {
+            /* Ajustes generales */
+            html {
+                font-size: 14px;
             }
             
-            .header-container {
-                flex-wrap: wrap;
+            .container {
+                width: 95%;
+                padding: 0 10px;
             }
             
-            .logo {
-                font-size: 1.5rem;
-            }
-            
-            nav ul {
-                margin-top: 0.5rem;
-                width: 100%;
-                justify-content: center;
-            }
-            
-            nav ul li {
-                margin: 0 0.5rem;
-            }
-            
-            nav ul li a {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding-top: 140px; /* Aún más espacio para pantallas pequeñas */
-            }
-            
-            .header-container {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: nowrap;
+            /* Encabezado móvil */
+            header {
+                padding: 0.8rem 0;
+                height: 60px;
             }
             
             .logo {
                 font-size: 1.3rem;
-                margin-right: 1rem;
+                max-width: 180px;
             }
             
-            /* Menú compacto horizontal para móvil */
-            nav ul {
+            /* Mostrar botón hamburguesa en móvil */
+            .menu-toggle {
                 display: flex;
-                flex-wrap: nowrap;
-                margin-top: 0;
-                justify-content: flex-end;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 5px;
+                order: 2;
+            }
+            
+            /* Navegación móvil */
+            nav {
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background-color: var(--header-color);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 999;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                height: 0;
+                overflow: hidden;
+            }
+            
+            nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+                height: auto;
+                padding: 1rem 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                padding: 0;
+                margin: 0;
             }
             
             nav ul li {
-                flex-shrink: 0;
-                margin: 0 0.3rem;
+                width: 100%;
+                margin: 0;
             }
             
             nav ul li a {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.85rem;
+                display: block;
+                padding: 1rem 1.5rem;
+                text-align: center;
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                width: 100%;
+                font-size: 1.1rem;
             }
             
+            nav ul li:last-child a {
+                border-bottom: none;
+            }
+            
+            nav ul li a:hover,
+            nav ul li a.active {
+                background-color: rgba(255, 255, 255, 0.15);
+                border-left: 4px solid #a3c2ff;
+            }
+            
+            /* Ajustar contenido principal para header móvil */
+            main {
+                margin-top: 60px;
+            }
+            
+            .section {
+                padding: 2rem 0;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Sección Inicio móvil */
             .about-container {
                 grid-template-columns: 1fr;
+                gap: 2rem;
             }
             
-            .portfolio-pdf-container {
-                grid-template-columns: 1fr;
+            .profile-img {
+                order: -1;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .highlight-box {
+                margin: 1.5rem 0;
+                padding: 1.2rem;
+            }
+            
+            /* Sección Curriculum móvil */
+            .cv-container {
+                padding: 1.5rem;
+            }
+            
+            .name {
+                font-size: 1.6rem;
             }
             
             .contact-info {
@@ -588,79 +647,120 @@
                 gap: 0.8rem;
             }
             
-            .footer-contact-info {
+            .cv-section h3 {
+                font-size: 1.2rem;
+            }
+            
+            .cv-item h4 {
+                font-size: 1rem;
+            }
+            
+            /* Sección Porfolio móvil */
+            .portfolio-pdf-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .pdf-preview {
+                height: 160px;
+            }
+            
+            .pdf-content h3 {
+                font-size: 1.2rem;
+            }
+            
+            /* Botones móvil */
+            .action-buttons {
                 flex-direction: column;
                 align-items: center;
                 gap: 0.8rem;
             }
             
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
             .btn {
                 width: 100%;
                 max-width: 300px;
-                justify-content: center;
+                padding: 0.9rem 1.5rem;
             }
             
+            /* Footer móvil */
+            .footer-contact-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            /* Modal móvil */
             .portfolio-pdf-modal-content {
                 width: 98%;
-                height: 95%;
+                height: 85%;
+            }
+            
+            .portfolio-pdf-modal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .portfolio-pdf-modal-header h3 {
+                font-size: 1rem;
+                line-height: 1.4;
             }
         }
         
-        @media (max-width: 480px) {
-            body {
-                padding-top: 150px; /* Espacio adicional para móviles muy pequeños */
+        /* Ajustes para tablets */
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                width: 92%;
             }
             
             .logo {
-                font-size: 1.2rem;
+                max-width: 220px;
             }
             
-            nav ul li a {
-                padding: 0.3rem 0.5rem;
-                font-size: 0.8rem;
+            .portfolio-pdf-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Mejoras de accesibilidad y touch */
+        @media (hover: none) {
+            .btn:hover {
+                background-color: var(--accent-color);
             }
             
-            .header-container {
-                padding: 0.5rem 0;
+            .btn-outline:hover {
+                background-color: transparent;
+                color: var(--accent-color);
             }
             
-            header {
-                padding: 0.5rem 0;
+            .portfolio-pdf-item:hover {
+                transform: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             }
         }
         
-        /* Scrollbar personalizada para navegación horizontal en móvil */
-        nav ul::-webkit-scrollbar {
-            height: 4px;
+        /* Prevenir zoom en inputs en iOS */
+        input, select, textarea {
+            font-size: 16px !important;
         }
         
-        nav ul::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-        
-        nav ul::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-        }
-        
-        nav ul::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
+        /* Mejorar scrolling en iOS */
+        .section {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Cabecera - Siempre fija -->
+    <!-- ENCABEZADO CON MENÚ HAMBURGUESA PARA MÓVIL -->
     <header>
         <div class="container header-container">
             <div class="logo">David Montero López</div>
-            <nav>
+            <button class="menu-toggle" aria-label="Abrir menú de navegación" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="main-nav">
                 <ul>
                     <li><a href="#" class="nav-btn active" data-section="inicio">Inicio</a></li>
                     <li><a href="#" class="nav-btn" data-section="curriculum">Curriculum</a></li>
@@ -825,7 +925,7 @@
             </div>
         </section>
 
-        <!-- Sección Porfolio - Con imágenes en lugar de iconos -->
+        <!-- Sección Porfolio -->
         <section id="portfolio" class="section">
             <div class="container">
                 <h2 class="section-title">Mi Porfolio</h2>
@@ -840,7 +940,6 @@
                     <!-- Proyecto 1: Bravon - Plan de Negocio -->
                     <div class="portfolio-pdf-item">
                         <div class="pdf-preview" data-pdf="bravon">
-                            <!-- Imagen BV.JPG en lugar de icono -->
                             <img src="BV.JPG" alt="Bravon - Plan de Negocio">
                         </div>
                         <div class="pdf-content">
@@ -873,7 +972,6 @@
                     <!-- Proyecto 2: Gumo - Plan de Atención al Cliente -->
                     <div class="portfolio-pdf-item">
                         <div class="pdf-preview" data-pdf="gumo">
-                            <!-- Imagen Gumoo.jpg en lugar de icono -->
                             <img src="Gumoo.jpg" alt="Gumo - Plan de Atención al Cliente">
                         </div>
                         <div class="pdf-content">
@@ -906,7 +1004,6 @@
                     <!-- Proyecto 3: Proyecto de Investigación sobre Redes Sociales y Fitness -->
                     <div class="portfolio-pdf-item">
                         <div class="pdf-preview" data-pdf="fitness">
-                            <!-- Imagen EA.png en lugar de icono -->
                             <img src="EA.png" alt="Impacto de las Redes Sociales en la Cultura Fitness">
                         </div>
                         <div class="pdf-content">
@@ -949,7 +1046,7 @@
         </section>
     </main>
 
-    <!-- Footer con fondo blanco -->
+    <!-- Footer -->
     <footer>
         <div class="container">
             <h3>Contacto</h3>
@@ -981,7 +1078,7 @@
         </div>
     </footer>
 
-    <!-- Modal para visualizar PDFs - Igual que el HTML proporcionado -->
+    <!-- Modal para visualizar PDFs -->
     <div id="portfolioPdfModal" class="portfolio-pdf-modal">
         <div class="portfolio-pdf-modal-content">
             <div class="portfolio-pdf-modal-header">
@@ -1009,11 +1106,67 @@
     </div>
 
     <script>
-        // Navegación entre secciones - Mejorado para móvil
+        // Navegación entre secciones
         document.addEventListener('DOMContentLoaded', function() {
             const navButtons = document.querySelectorAll('.nav-btn');
             const sections = document.querySelectorAll('.section');
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mainNav = document.getElementById('main-nav');
             
+            // ===== MENÚ MÓVIL =====
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    mainNav.classList.toggle('active');
+                    const isExpanded = mainNav.classList.contains('active');
+                    this.setAttribute('aria-expanded', isExpanded);
+                    
+                    // Cambiar icono
+                    const icon = this.querySelector('i');
+                    if (isExpanded) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+                
+                // Cerrar menú al hacer clic en un enlace
+                navButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        mainNav.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        const icon = menuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    });
+                });
+                
+                // Cerrar menú al hacer clic fuera
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('nav') && !event.target.closest('.menu-toggle')) {
+                        mainNav.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        const icon = menuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+                
+                // Cerrar menú con tecla Escape
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        const icon = menuToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+            }
+            
+            // ===== NAVEGACIÓN ENTRE SECCIONES =====
             function showSection(sectionId) {
                 sections.forEach(section => {
                     section.classList.remove('active');
@@ -1032,22 +1185,8 @@
                     }
                 });
                 
-                // Scroll suave hasta la sección
-                setTimeout(() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 10);
-                
-                // Cerrar menú móvil si está abierto
-                if (window.innerWidth <= 768) {
-                    const menuToggle = document.querySelector('.menu-toggle');
-                    const nav = document.querySelector('nav ul');
-                    if (menuToggle && nav) {
-                        if (menuToggle.classList.contains('active')) {
-                            nav.style.display = 'none';
-                            menuToggle.classList.remove('active');
-                        }
-                    }
-                }
+                // Scroll suave al inicio
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
             
             navButtons.forEach(button => {
@@ -1058,26 +1197,10 @@
                 });
             });
             
-            // Scroll automático al cargar la página
-            window.addEventListener('load', function() {
-                setTimeout(function() {
-                    window.scrollTo(0, 0);
-                    
-                    const inicioSection = document.getElementById('inicio');
-                    if (inicioSection) {
-                        const headerHeight = document.querySelector('header').offsetHeight;
-                        window.scrollTo({
-                            top: inicioSection.offsetTop - headerHeight,
-                            behavior: 'instant'
-                        });
-                    }
-                }, 100);
-            });
-            
-            // También forzar scroll al inicio cuando se muestra la primera vez
+            // Mostrar sección de inicio por defecto
             showSection('inicio');
             
-            // Funcionalidad para PDFs
+            // ===== FUNCIONALIDAD PARA PDFs =====
             const portfolioPdfModal = document.getElementById('portfolioPdfModal');
             const closePortfolioPdfModal = document.getElementById('closePortfolioPdfModal');
             const backToBtn = document.getElementById('backToBtn');
@@ -1156,6 +1279,7 @@
                     
                     updatedPdfIframe.src = pdfFile;
                     portfolioPdfModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 }
             }
             
@@ -1177,6 +1301,7 @@
                 closePortfolioPdfModal.addEventListener('click', function() {
                     portfolioPdfModal.classList.remove('active');
                     pdfIframe.src = '';
+                    document.body.style.overflow = 'auto';
                 });
             }
             
@@ -1186,10 +1311,12 @@
                     if (pdfId && pdfReturnPages[pdfId]) {
                         portfolioPdfModal.classList.remove('active');
                         pdfIframe.src = '';
+                        document.body.style.overflow = 'auto';
                         showSection(pdfReturnPages[pdfId]);
                     } else {
                         portfolioPdfModal.classList.remove('active');
                         pdfIframe.src = '';
+                        document.body.style.overflow = 'auto';
                         showSection('portfolio');
                     }
                 });
@@ -1209,6 +1336,7 @@
                 if (e.target === portfolioPdfModal) {
                     portfolioPdfModal.classList.remove('active');
                     pdfIframe.src = '';
+                    document.body.style.overflow = 'auto';
                 }
             });
             
@@ -1229,19 +1357,22 @@
             
             checkFiles();
             
-            // Ajustar padding del body dinámicamente para móvil
-            function adjustBodyPadding() {
-                const header = document.querySelector('header');
-                if (header) {
-                    const headerHeight = header.offsetHeight;
-                    document.body.style.paddingTop = headerHeight + 'px';
-                }
+            // Detectar si es móvil
+            function isMobile() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             }
             
-            // Ajustar al cargar y al cambiar tamaño de ventana
-            window.addEventListener('load', adjustBodyPadding);
-            window.addEventListener('resize', adjustBodyPadding);
-            setTimeout(adjustBodyPadding, 500);
+            // Ajustes para móvil
+            if (isMobile()) {
+                // Ajustar altura del viewport
+                let vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                
+                window.addEventListener('resize', () => {
+                    let vh = window.innerHeight * 0.01;
+                    document.documentElement.style.setProperty('--vh', `${vh}px`);
+                });
+            }
         });
     </script>
 </body>
