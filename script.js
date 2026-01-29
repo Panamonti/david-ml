@@ -269,3 +269,189 @@ document.addEventListener('DOMContentLoaded', function() {
     
     checkFiles();
 });
+// ===== FUNCIONALIDAD PARA DESCARGAR CV =====
+document.addEventListener('DOMContentLoaded', function() {
+    // ... código existente ...
+    
+    // Función para descargar el CV
+    function downloadCV() {
+        const pdfFile = 'CV.pdf'; // Nombre del archivo PDF
+        
+        // Verificar si el archivo existe
+        fetch(pdfFile)
+            .then(response => {
+                if (response.ok) {
+                    // Crear un enlace temporal para la descarga
+                    const link = document.createElement('a');
+                    link.href = pdfFile;
+                    link.download = 'CV_David_Montero_Lopez.pdf'; // Nombre del archivo descargado
+                    
+                    // Añadir al DOM, hacer clic y remover
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Mostrar notificación de éxito
+                    showDownloadNotification('CV descargado correctamente', 'success');
+                } else {
+                    throw new Error('Archivo no encontrado');
+                }
+            })
+            .catch(error => {
+                console.error('Error al descargar el CV:', error);
+                showDownloadNotification('Error al descargar el CV. Asegúrate de que el archivo CV.pdf está en la carpeta.', 'error');
+            });
+    }
+    
+    // Función para mostrar notificación de descarga
+    function showDownloadNotification(message, type) {
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.className = `download-notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+            <button class="notification-close">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        // Estilos para la notificación
+        notification.style.cssText = `
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background-color: ${type === 'success' ? '#d4edda' : '#f8d7da'};
+            color: ${type === 'success' ? '#155724' : '#721c24'};
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            z-index: 3000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 350px;
+            border-left: 4px solid ${type === 'success' ? '#28a745' : '#dc3545'};
+        `;
+        
+        // Estilo para el botón de cerrar
+        const closeBtn = notification.querySelector('.notification-close');
+        closeBtn.style.cssText = `
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.2rem;
+            margin-left: auto;
+        `;
+        
+        // Añadir al DOM
+        document.body.appendChild(notification);
+        
+        // Cerrar notificación al hacer clic en el botón
+        closeBtn.addEventListener('click', () => {
+            notification.style.animation = 'slideOut 0.3s ease-in';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        });
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.style.animation = 'slideOut 0.3s ease-in';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }
+        }, 5000);
+        
+        // Animaciones CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Añadir evento al botón de descarga
+    const downloadCvBtn = document.getElementById('downloadCvBtn');
+    if (downloadCvBtn) {
+        downloadCvBtn.addEventListener('click', downloadCV);
+    }
+    
+    // También añadir botón de descarga en el modal del CV
+    const originalShowPortfolioPdf = window.showPortfolioPdf;
+    window.showPortfolioPdf = function(pdfId) {
+        originalShowPortfolioPdf(pdfId);
+        
+        // Si es el CV, añadir botón de descarga en el modal
+        if (pdfId === 'cv') {
+            setTimeout(() => {
+                const modalHeader = document.querySelector('.portfolio-pdf-modal-header');
+                if (modalHeader) {
+                    // Verificar si ya existe el botón de descarga
+                    if (!document.getElementById('modalDownloadBtn')) {
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.id = 'modalDownloadBtn';
+                        downloadBtn.className = 'btn btn-success';
+                        downloadBtn.style.cssText = 'margin-left: auto; margin-right: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;';
+                        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Descargar';
+                        
+                        downloadBtn.addEventListener('click', downloadCV);
+                        
+                        // Insertar antes del botón de cerrar
+                        const closeBtn = document.getElementById('closePortfolioPdfModal');
+                        if (closeBtn && closeBtn.parentNode) {
+                            closeBtn.parentNode.insertBefore(downloadBtn, closeBtn);
+                        }
+                    }
+                }
+            }, 100);
+        }
+    };
+    
+    // También añadir botón de descarga en la sección de inicio
+    const viewCvBtnInicio = document.querySelector('#inicio .view-pdf-btn[data-pdf="cv"]');
+    if (viewCvBtnInicio) {
+        // Crear contenedor para ambos botones
+        const buttonContainer = viewCvBtnInicio.parentNode;
+        if (buttonContainer && !buttonContainer.querySelector('#downloadCvBtnInicio')) {
+            const downloadBtnInicio = document.createElement('button');
+            downloadBtnInicio.id = 'downloadCvBtnInicio';
+            downloadBtnInicio.className = 'btn btn-download';
+            downloadBtnInicio.innerHTML = '<i class="fas fa-download"></i> Descargar CV';
+            downloadBtnInicio.style.marginTop = '1rem';
+            
+            downloadBtnInicio.addEventListener('click', downloadCV);
+            
+            // Insertar después del botón de ver CV
+            buttonContainer.appendChild(downloadBtnInicio);
+        }
+    }
+});

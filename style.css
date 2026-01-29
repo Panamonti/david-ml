@@ -935,3 +935,44 @@ input, select, textarea {
     margin: 1rem 0;
     color: #c53030;
 }
+/* Estilos para botones de descarga - AÑADIR AL FINAL DEL ARCHIVO CSS */
+
+.btn-download {
+    background-color: #28a745;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
+
+.btn-download:hover {
+    background-color: #218838;
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success {
+    background-color: #28a745 !important;
+}
+
+.btn-success:hover {
+    background-color: #218838 !important;
+}
+
+/* Estilos específicos para los botones de acción en la sección CV */
+.cv-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 768px) {
+    .cv-action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .cv-action-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
