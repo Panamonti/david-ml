@@ -24,10 +24,10 @@
             background-color: white;
             color: var(--text-color);
             line-height: 1.6;
-            padding-top: 80px; /* Añadido para compensar el header fijo */
+            padding-top: 80px; /* Para compensar el header fijo en escritorio */
         }
         
-        /* Cabecera */
+        /* Cabecera - Siempre fija */
         header {
             background-color: var(--header-color);
             color: white;
@@ -37,7 +37,7 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            height: 80px; /* Añadido para altura fija */
+            height: auto;
         }
         
         .container {
@@ -51,21 +51,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 100%;
+            flex-wrap: nowrap; /* Cambiado de wrap a nowrap */
         }
         
         .logo {
             font-size: 1.8rem;
             font-weight: 700;
+            white-space: nowrap;
         }
         
         nav ul {
             display: flex;
             list-style: none;
+            flex-wrap: nowrap; /* Asegura que no se rompa */
+            margin: 0;
+            padding: 0;
         }
         
         nav ul li {
-            margin-left: 1.5rem;
+            margin-left: 1rem;
         }
         
         nav ul li a {
@@ -73,9 +77,11 @@
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.8rem;
             border-radius: 4px;
             border: 2px solid transparent;
+            white-space: nowrap; /* Evita que se rompa el texto */
+            font-size: 0.95rem;
         }
         
         nav ul li a:hover,
@@ -84,9 +90,20 @@
             border-color: #a3c2ff;
         }
         
-        /* Contenido principal - MODIFICADO: Reducido porque ya hay padding-top en body */
+        /* Menú hamburguesa para móvil */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        /* Contenido principal */
         main {
-            margin-top: 40px; /* Reducido porque body ya tiene padding-top */
+            margin-top: 40px;
         }
         
         /* Secciones */
@@ -489,24 +506,72 @@
             color: #1a365d;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive - Mejorado para mantener header fijo */
+        @media (max-width: 992px) {
             body {
-                padding-top: 120px; /* Más espacio en móviles */
+                padding-top: 120px; /* Más espacio para header más alto en móvil */
             }
             
             .header-container {
-                flex-direction: column;
-                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
             }
             
             nav ul {
-                flex-wrap: wrap;
+                margin-top: 0.5rem;
+                width: 100%;
                 justify-content: center;
             }
             
             nav ul li {
-                margin: 0.5rem;
+                margin: 0 0.5rem;
+            }
+            
+            nav ul li a {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px; /* Aún más espacio para pantallas pequeñas */
+            }
+            
+            .header-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: nowrap;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+                margin-right: 1rem;
+            }
+            
+            /* Menú compacto horizontal para móvil */
+            nav ul {
+                display: flex;
+                flex-wrap: nowrap;
+                margin-top: 0;
+                justify-content: flex-end;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 5px;
+            }
+            
+            nav ul li {
+                flex-shrink: 0;
+                margin: 0 0.3rem;
+            }
+            
+            nav ul li a {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.85rem;
             }
             
             .about-container {
@@ -545,11 +610,53 @@
                 height: 95%;
             }
         }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 150px; /* Espacio adicional para móviles muy pequeños */
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            nav ul li a {
+                padding: 0.3rem 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .header-container {
+                padding: 0.5rem 0;
+            }
+            
+            header {
+                padding: 0.5rem 0;
+            }
+        }
+        
+        /* Scrollbar personalizada para navegación horizontal en móvil */
+        nav ul::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        nav ul::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        
+        nav ul::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+        }
+        
+        nav ul::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Cabecera -->
+    <!-- Cabecera - Siempre fija -->
     <header>
         <div class="container header-container">
             <div class="logo">David Montero López</div>
@@ -902,7 +1009,7 @@
     </div>
 
     <script>
-        // Navegación entre secciones - MODIFICADO: Simplificado
+        // Navegación entre secciones - Mejorado para móvil
         document.addEventListener('DOMContentLoaded', function() {
             const navButtons = document.querySelectorAll('.nav-btn');
             const sections = document.querySelectorAll('.section');
@@ -925,10 +1032,22 @@
                     }
                 });
                 
-                // Scroll suave hasta la sección (usando el padding-top del body)
+                // Scroll suave hasta la sección
                 setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 10);
+                
+                // Cerrar menú móvil si está abierto
+                if (window.innerWidth <= 768) {
+                    const menuToggle = document.querySelector('.menu-toggle');
+                    const nav = document.querySelector('nav ul');
+                    if (menuToggle && nav) {
+                        if (menuToggle.classList.contains('active')) {
+                            nav.style.display = 'none';
+                            menuToggle.classList.remove('active');
+                        }
+                    }
+                }
             }
             
             navButtons.forEach(button => {
@@ -939,20 +1058,17 @@
                 });
             });
             
-            // SOLUCIÓN: Scroll automático al cargar la página para mostrar "Quién Soy"
-            // Esto es lo que faltaba - hace scroll automáticamente cuando la página carga
+            // Scroll automático al cargar la página
             window.addEventListener('load', function() {
-                // Pequeño retraso para asegurar que todo esté cargado
                 setTimeout(function() {
                     window.scrollTo(0, 0);
                     
-                    // Asegurar que la sección inicio esté visible
                     const inicioSection = document.getElementById('inicio');
                     if (inicioSection) {
                         const headerHeight = document.querySelector('header').offsetHeight;
                         window.scrollTo({
                             top: inicioSection.offsetTop - headerHeight,
-                            behavior: 'instant' // 'instant' para que sea inmediato al cargar
+                            behavior: 'instant'
                         });
                     }
                 }, 100);
@@ -961,7 +1077,7 @@
             // También forzar scroll al inicio cuando se muestra la primera vez
             showSection('inicio');
             
-            // Funcionalidad para PDFs - Igual que el HTML proporcionado
+            // Funcionalidad para PDFs
             const portfolioPdfModal = document.getElementById('portfolioPdfModal');
             const closePortfolioPdfModal = document.getElementById('closePortfolioPdfModal');
             const backToBtn = document.getElementById('backToBtn');
@@ -1112,6 +1228,20 @@
             }
             
             checkFiles();
+            
+            // Ajustar padding del body dinámicamente para móvil
+            function adjustBodyPadding() {
+                const header = document.querySelector('header');
+                if (header) {
+                    const headerHeight = header.offsetHeight;
+                    document.body.style.paddingTop = headerHeight + 'px';
+                }
+            }
+            
+            // Ajustar al cargar y al cambiar tamaño de ventana
+            window.addEventListener('load', adjustBodyPadding);
+            window.addEventListener('resize', adjustBodyPadding);
+            setTimeout(adjustBodyPadding, 500);
         });
     </script>
 </body>
