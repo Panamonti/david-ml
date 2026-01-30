@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>David Montero López - Porfolio</title>
-    <!-- ENLACE AL ARCHIVO CSS -->
     <link rel="stylesheet" href="style.css">
-    <!-- ENLACE A FONT AWESOME (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- ENCABEZADO CON MENÚ HAMBURGUESA -->
+    <!-- ENCABEZADO CON MENÚ HAMBURGUESA PARA MÓVIL -->
     <header>
         <div class="container header-container">
             <!-- DOS VERSIONES DEL LOGO -->
@@ -29,16 +27,13 @@
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- Contenido principal -->
     <main>
         <!-- Sección Inicio -->
         <section id="inicio" class="section active">
             <div class="container">
                 <h2 class="section-title">Quién Soy</h2>
                 <div class="about-container">
-                    <div class="profile-img">
-                        <img src="Yo.jpg" alt="David Montero López - Perfil profesional">
-                    </div>
                     <div class="about-text">
                         <p>Soy <strong>David Montero López</strong>, un profesional apasionado del marketing y la publicidad con formación técnica especializada en estas áreas. Mi objetivo es desarrollar mi carrera en el mundo del marketing digital, aportando creatividad, innovación y un enfoque estratégico a cada proyecto.</p>
                         
@@ -57,10 +52,10 @@
                             <button class="btn btn-outline nav-btn" data-section="portfolio">
                                 <i class="fas fa-briefcase"></i> Ver Porfolio
                             </button>
-                            <button class="btn btn-download" id="downloadCvBtnInicio">
-                                <i class="fas fa-download"></i> Descargar CV
-                            </button>
                         </div>
+                    </div>
+                    <div class="profile-img">
+                        <img src="Yo.jpg" alt="David Montero López - Perfil profesional">
                     </div>
                 </div>
             </div>
@@ -185,7 +180,7 @@
                     </div>
                 </div>
                 
-                <!-- BOTONES DE ACCIÓN PARA EL CV -->
+                <!-- BOTONES DE ACCIÓN PARA EL CV - MODIFICADO -->
                 <div class="action-buttons" style="margin-top: 3rem;">
                     <button class="btn btn-pdf view-pdf-btn" data-pdf="cv">
                         <i class="fas fa-eye"></i> Ver CV en PDF
@@ -327,7 +322,7 @@
         </section>
     </main>
 
-    <!-- FOOTER -->
+    <!-- Footer -->
     <footer>
         <div class="container">
             <h3>Contacto</h3>
@@ -359,7 +354,7 @@
         </div>
     </footer>
 
-    <!-- MODAL PARA VISUALIZAR PDFs -->
+    <!-- Modal para visualizar PDFs -->
     <div id="portfolioPdfModal" class="portfolio-pdf-modal">
         <div class="portfolio-pdf-modal-content">
             <div class="portfolio-pdf-modal-header">
@@ -386,7 +381,6 @@
         </div>
     </div>
 
-    <!-- ENLACE AL ARCHIVO JAVASCRIPT -->
     <script src="script.js"></script>
 </body>
 </html>

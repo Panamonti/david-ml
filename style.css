@@ -21,7 +21,7 @@ body {
     padding-top: 80px; /* ESPACIO PARA HEADER FIJO */
 }
 
-/* ===== ENCABEZADO ===== */
+/* ===== ENCABEZADO RESPONSIVO ===== */
 header {
     background-color: var(--header-color);
     color: white;
@@ -36,7 +36,7 @@ header {
 
 .container {
     width: 90%;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
 }
@@ -49,6 +49,7 @@ header {
     gap: 0.5rem;
 }
 
+/* LOGO MEJORADO - VERSIÓN COMPLETA */
 .logo {
     font-size: 1.6rem;
     font-weight: 700;
@@ -58,12 +59,14 @@ header {
     max-width: 300px;
 }
 
+/* Versión abreviada para móvil */
 .logo-short {
     display: none;
 }
 
+/* Botón hamburguesa para móvil */
 .menu-toggle {
-    display: flex;
+    display: none;
     background: none;
     border: none;
     color: white;
@@ -76,77 +79,39 @@ header {
     justify-content: center;
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
-    order: 2;
 }
 
-nav {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    background-color: var(--header-color);
-    transform: translateY(-100%);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    height: 0;
-    overflow: hidden;
-}
-
-nav.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-    height: auto;
-    padding: 1rem 0;
-}
-
+/* Navegación desktop */
 nav ul {
-    flex-direction: column;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    gap: 0;
+    display: flex;
     list-style: none;
-}
-
-nav ul li {
-    width: 100%;
-    margin: 0;
+    gap: 1.5rem;
 }
 
 nav ul li a {
-    display: block;
     color: white;
     text-decoration: none;
     font-weight: 500;
-    padding: 1.2rem 1.5rem;
-    text-align: center;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%;
-    font-size: 1.1rem;
     transition: all 0.3s;
-}
-
-nav ul li:last-child a {
-    border-bottom: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    white-space: nowrap;
+    font-size: 1.1rem;
 }
 
 nav ul li a:hover,
 nav ul li a.active {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-left: 4px solid #a3c2ff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #a3c2ff;
 }
 
-/* CONTENIDO PRINCIPAL */
+/* Contenido principal */
 main {
     min-height: calc(100vh - 300px);
 }
 
+/* Secciones */
 .section {
     display: none;
     padding: 3rem 0;
@@ -168,7 +133,7 @@ main {
     color: var(--header-color);
     position: relative;
     padding-bottom: 0.5rem;
-    font-size: 2rem;
+    font-size: 2.5rem;
 }
 
 .section-title::after {
@@ -182,33 +147,32 @@ main {
     transform: translateX(-50%);
 }
 
-/* SECCIÓN INICIO */
+/* Sección Inicio */
 .about-container {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
     align-items: center;
 }
 
 .about-text {
-    font-size: 1.1rem;
-    width: 100%;
+    font-size: 1.15rem;
 }
 
 .about-text p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
     line-height: 1.7;
 }
 
 .profile-img {
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    justify-self: center;
     overflow: hidden;
     background-color: #f5f5f5;
     transition: transform 0.3s ease;
-    order: -1;
 }
 
 .profile-img:hover {
@@ -218,7 +182,7 @@ main {
 .profile-img img {
     width: 100%;
     height: auto;
-    max-height: 400px;
+    max-height: 450px;
     object-fit: cover;
     display: block;
     border-radius: 10px;
@@ -227,18 +191,18 @@ main {
 .highlight-box {
     background-color: var(--light-bg);
     border-left: 5px solid var(--accent-color);
-    padding: 1.5rem;
-    margin: 2rem 0;
+    padding: 2rem;
+    margin: 2.5rem 0;
     border-radius: 0 10px 10px 0;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* SECCIÓN CURRICULUM */
+/* Sección Curriculum */
 .cv-container {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
+    padding: 3rem;
     margin-bottom: 3rem;
     border: 1px solid var(--border-color);
 }
@@ -251,7 +215,7 @@ main {
 }
 
 .name {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--header-color);
     margin-bottom: 0.8rem;
 }
@@ -260,7 +224,7 @@ main {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 2rem;
     margin-top: 1.5rem;
 }
 
@@ -283,30 +247,31 @@ main {
     margin-bottom: 1.5rem;
     padding-bottom: 0.8rem;
     border-bottom: 2px solid var(--border-color);
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     gap: 0.8rem;
 }
 
 .cv-item {
-    margin-bottom: 1.5rem;
-    padding-left: 1rem;
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
     border-left: 4px solid transparent;
     transition: all 0.3s;
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     border-radius: 8px;
 }
 
 .cv-item:hover {
     border-left-color: var(--accent-color);
     background-color: var(--light-bg);
+    transform: translateX(10px);
 }
 
 .cv-item h4 {
     color: var(--accent-color);
     margin-bottom: 0.5rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .date {
@@ -323,29 +288,29 @@ main {
 .skills-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8rem;
+    gap: 1rem;
     margin-top: 1.5rem;
 }
 
 .skill-tag {
     background-color: var(--light-bg);
-    padding: 0.6rem 1rem;
+    padding: 0.7rem 1.2rem;
     border-radius: 25px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     border-left: 4px solid var(--accent-color);
     transition: all 0.3s;
     font-weight: 500;
 }
 
 .skill-tag:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* SECCIÓN PORFOLIO */
+/* Sección Porfolio */
 .portfolio-pdf-container {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 2.5rem;
     margin-bottom: 3rem;
 }
@@ -363,13 +328,13 @@ main {
 }
 
 .portfolio-pdf-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .pdf-preview {
     width: 100%;
-    height: 200px;
+    height: 220px;
     background: linear-gradient(135deg, #e1e8f7 0%, #f0f3fa 100%);
     display: flex;
     align-items: center;
@@ -391,7 +356,7 @@ main {
 }
 
 .pdf-content {
-    padding: 1.5rem;
+    padding: 2rem;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -399,8 +364,8 @@ main {
 
 .pdf-content h3 {
     color: var(--header-color);
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.5rem;
     line-height: 1.4;
 }
 
@@ -440,13 +405,12 @@ main {
     font-weight: 500;
 }
 
-/* BOTONES */
+/* Botones de acción */
 .action-buttons {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 1.5rem;
+    margin-top: 3rem;
 }
 
 .btn {
@@ -456,15 +420,15 @@ main {
     gap: 0.7rem;
     background-color: var(--accent-color);
     color: white;
-    padding: 0.9rem 1.8rem;
+    padding: 1rem 2rem;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s;
     border: none;
     cursor: pointer;
-    font-size: 1rem;
-    min-height: 50px;
+    font-size: 1.1rem;
+    min-height: 54px;
     -webkit-tap-highlight-color: transparent;
     box-shadow: 0 4px 10px rgba(45, 90, 160, 0.2);
 }
@@ -498,17 +462,7 @@ main {
     box-shadow: 0 8px 20px rgba(211, 47, 47, 0.3);
 }
 
-.btn-download {
-    background-color: #28a745;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
-}
-
-.btn-download:hover {
-    background-color: #218838;
-    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-}
-
-/* MODAL PDFs */
+/* Modal para PDFs */
 .portfolio-pdf-modal {
     display: none;
     position: fixed;
@@ -530,7 +484,7 @@ main {
 .portfolio-pdf-modal-content {
     background-color: white;
     width: 95%;
-    max-width: 1000px;
+    max-width: 1200px;
     height: 90vh;
     border-radius: 12px;
     display: flex;
@@ -578,7 +532,7 @@ main {
     display: block;
 }
 
-/* FOOTER */
+/* Footer */
 footer {
     background-color: white;
     color: var(--text-color);
@@ -591,14 +545,14 @@ footer {
 footer h3 {
     color: var(--header-color);
     margin-bottom: 1.5rem;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
 }
 
 .footer-contact-info {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 2rem;
     margin: 2rem 0;
 }
 
@@ -607,8 +561,8 @@ footer h3 {
     align-items: center;
     gap: 0.8rem;
     color: var(--text-color);
-    font-size: 1rem;
-    padding: 0.8rem 1.2rem;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
     background-color: var(--light-bg);
     border-radius: 8px;
     transition: transform 0.3s;
@@ -626,16 +580,16 @@ footer h3 {
 .social-links {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin: 2rem 0;
+    gap: 2rem;
+    margin: 2.5rem 0;
 }
 
 .social-links a {
     color: var(--accent-color);
-    font-size: 1.8rem;
+    font-size: 2rem;
     transition: all 0.3s;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -652,17 +606,18 @@ footer h3 {
 footer p {
     margin-top: 2rem;
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE PARA MÓVIL ===== */
 @media screen and (max-width: 768px) {
+    /* Ajustes generales */
     html {
         font-size: 14px;
     }
     
     body {
-        padding-top: 60px;
+        padding-top: 60px; /* Menos espacio para header móvil */
     }
     
     .container {
@@ -670,21 +625,20 @@ footer p {
         padding: 0 15px;
     }
     
+    /* Encabezado móvil */
     header {
         padding: 0.8rem 0;
         height: 60px;
     }
     
-    nav {
-        top: 60px;
-    }
-    
+    /* Logo en móvil */
     .logo {
         font-size: 1.1rem;
         max-width: 200px;
         font-weight: 600;
     }
     
+    /* Mostrar versión abreviada en móvil muy pequeño */
     @media screen and (max-width: 380px) {
         .logo {
             display: none;
@@ -699,6 +653,72 @@ footer p {
         }
     }
     
+    /* Mostrar botón hamburguesa en móvil */
+    .menu-toggle {
+        display: flex;
+        order: 2;
+    }
+    
+    /* Navegación móvil */
+    nav {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: var(--header-color);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 999;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        height: 0;
+        overflow: hidden;
+    }
+    
+    nav.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        height: auto;
+        padding: 1rem 0;
+    }
+    
+    nav ul {
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        gap: 0;
+    }
+    
+    nav ul li {
+        width: 100%;
+        margin: 0;
+    }
+    
+    nav ul li a {
+        display: block;
+        padding: 1.2rem 1.5rem;
+        text-align: center;
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        width: 100%;
+        font-size: 1.1rem;
+    }
+    
+    nav ul li:last-child a {
+        border-bottom: none;
+    }
+    
+    nav ul li a:hover,
+    nav ul li a.active {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-left: 4px solid #a3c2ff;
+    }
+    
+    /* Ajustar contenido principal para header móvil */
     main {
         margin-top: 0;
     }
@@ -708,7 +728,7 @@ footer p {
     }
     
     .section-title {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
         margin-bottom: 2rem;
     }
     
@@ -716,11 +736,14 @@ footer p {
         width: 80px;
     }
     
+    /* Sección Inicio móvil */
     .about-container {
-        gap: 2rem;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
     }
     
     .profile-img {
+        order: -1;
         max-width: 300px;
         margin: 0 auto;
     }
@@ -734,12 +757,13 @@ footer p {
         padding: 1.2rem;
     }
     
+    /* Sección Curriculum móvil */
     .cv-container {
         padding: 1.5rem;
     }
     
     .name {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
     }
     
     .contact-info {
@@ -755,7 +779,7 @@ footer p {
     }
     
     .cv-section h3 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
     
     .cv-item {
@@ -767,7 +791,9 @@ footer p {
         font-size: 1.1rem;
     }
     
+    /* Sección Porfolio móvil */
     .portfolio-pdf-container {
+        grid-template-columns: 1fr;
         gap: 2rem;
     }
     
@@ -776,13 +802,14 @@ footer p {
     }
     
     .pdf-content h3 {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
     
     .pdf-content {
         padding: 1.5rem;
     }
     
+    /* Botones móvil */
     .action-buttons {
         flex-direction: column;
         align-items: center;
@@ -798,6 +825,7 @@ footer p {
         min-height: 50px;
     }
     
+    /* Footer móvil */
     .footer-contact-info {
         flex-direction: column;
         align-items: center;
@@ -812,11 +840,12 @@ footer p {
     }
     
     .social-links a {
-        width: 45px;
-        height: 45px;
+        width: 50px;
+        height: 50px;
         font-size: 1.5rem;
     }
     
+    /* Modal móvil */
     .portfolio-pdf-modal-content {
         width: 98%;
         height: 85vh;
@@ -839,11 +868,10 @@ footer p {
     }
 }
 
-/* TABLETS */
+/* Ajustes para tablets */
 @media screen and (min-width: 769px) and (max-width: 1024px) {
     .container {
-        width: 90%;
-        max-width: 700px;
+        width: 92%;
     }
     
     .logo {
@@ -852,7 +880,7 @@ footer p {
     }
     
     .portfolio-pdf-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .about-container {
@@ -860,7 +888,7 @@ footer p {
     }
 }
 
-/* ACCESIBILIDAD */
+/* Mejoras de accesibilidad y touch */
 @media (hover: none) {
     .btn:hover {
         transform: none;
@@ -887,14 +915,17 @@ footer p {
     }
 }
 
+/* Prevenir zoom en inputs en iOS */
 input, select, textarea {
     font-size: 16px !important;
 }
 
+/* Mejorar scrolling en iOS */
 .section {
     -webkit-overflow-scrolling: touch;
 }
 
+/* Clase para mostrar mensajes de error */
 .error-message {
     text-align: center;
     padding: 2rem;
@@ -903,4 +934,45 @@ input, select, textarea {
     border-radius: 8px;
     margin: 1rem 0;
     color: #c53030;
+}
+/* Estilos para botones de descarga - AÑADIR AL FINAL DEL ARCHIVO CSS */
+
+.btn-download {
+    background-color: #28a745;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
+
+.btn-download:hover {
+    background-color: #218838;
+    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success {
+    background-color: #28a745 !important;
+}
+
+.btn-success:hover {
+    background-color: #218838 !important;
+}
+
+/* Estilos específicos para los botones de acción en la sección CV */
+.cv-action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+@media screen and (max-width: 768px) {
+    .cv-action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .cv-action-buttons .btn {
+        width: 100%;
+        max-width: 300px;
+    }
 }

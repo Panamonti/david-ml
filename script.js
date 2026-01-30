@@ -1,12 +1,11 @@
 // Navegación entre secciones
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos del DOM
     const navButtons = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.section');
     const menuToggle = document.querySelector('.menu-toggle');
     const mainNav = document.getElementById('main-nav');
     
-    // ===== MENÚ HAMBURGUESA =====
+    // ===== MENÚ MÓVIL =====
     if (menuToggle) {
         menuToggle.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -61,18 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ===== NAVEGACIÓN ENTRE SECCIONES =====
     function showSection(sectionId) {
-        // Ocultar todas las secciones
         sections.forEach(section => {
             section.classList.remove('active');
         });
         
-        // Mostrar sección activa
         const activeSection = document.getElementById(sectionId);
         if (activeSection) {
             activeSection.classList.add('active');
         }
         
-        // Actualizar botones activos
         navButtons.forEach(button => {
             if (button.getAttribute('data-section') === sectionId) {
                 button.classList.add('active');
@@ -85,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
-    // Añadir eventos a los botones de navegación
     navButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -108,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewPdfButtons = document.querySelectorAll('.view-pdf-btn');
     const pdfPreviews = document.querySelectorAll('.pdf-preview');
     
-    // Datos de los PDFs
     const pdfTitles = {
         'cv': 'Curriculum Vitae - David Montero López',
         'bravon': 'Bravon - Plan de Negocio',
@@ -130,13 +124,10 @@ document.addEventListener('DOMContentLoaded', function() {
         'fitness': 'Proyecto.pdf'
     };
     
-    // Función para mostrar PDF en modal
     function showPortfolioPdf(pdfId) {
         if (pdfTitles[pdfId]) {
-            // Actualizar título
             portfolioPdfTitle.innerHTML = `<i class="fas fa-file-pdf"></i> ${pdfTitles[pdfId]}`;
             
-            // Actualizar botón de volver
             const returnPage = pdfReturnPages[pdfId];
             if (returnPage === 'curriculum') {
                 backToBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Curriculum';
@@ -144,26 +135,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 backToBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Porfolio';
             }
             
-            // Mostrar loading
             pdfLoading.classList.add('active');
             pdfIframe.style.display = 'none';
             
             const pdfFile = pdfFiles[pdfId];
             
-            // Limpiar iframe anterior
+            // Limpiar y recargar el iframe para evitar problemas de caché
+            const newIframe = document.createElement('iframe');
+            newIframe.className = 'pdf-iframe';
+            newIframe.id = 'pdfIframe';
+            newIframe.frameBorder = '0';
+            
+            // Reemplazar el iframe existente
             const oldIframe = document.getElementById('pdfIframe');
             if (oldIframe) {
-                oldIframe.src = '';
+                portfolioPdfContent.removeChild(oldIframe);
             }
+            portfolioPdfContent.appendChild(newIframe);
             
-            // Configurar nuevo iframe
-            pdfIframe.onload = function() {
-                pdfLoading.classList.remove('active');
-                pdfIframe.style.display = 'block';
+            const updatedPdfIframe = document.getElementById('pdfIframe');
+            const updatedPdfLoading = document.getElementById('pdfLoading');
+            
+            updatedPdfIframe.onload = function() {
+                updatedPdfLoading.classList.remove('active');
+                updatedPdfIframe.style.display = 'block';
             };
             
-            pdfIframe.onerror = function() {
-                pdfLoading.innerHTML = `
+            updatedPdfIframe.onerror = function() {
+                updatedPdfLoading.innerHTML = `
                     <div style="text-align: center; padding: 3rem;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #d32f2f; margin-bottom: 1.5rem;"></i>
                         <h3 style="color: var(--header-color); margin-bottom: 1.5rem; font-size: 1.5rem;">Error al cargar el porfolio</h3>
@@ -179,58 +178,120 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Cargar el PDF
-            pdfIframe.src = pdfFile;
+            updatedPdfIframe.src = pdfFile;
             portfolioPdfModal.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            // Añadir botón de descarga si es el CV
-            if (pdfId === 'cv') {
-                setTimeout(() => {
-                    const modalHeader = document.querySelector('.portfolio-pdf-modal-header');
-                    if (modalHeader && !document.getElementById('modalDownloadBtn')) {
-                        const downloadBtn = document.createElement('button');
-                        downloadBtn.id = 'modalDownloadBtn';
-                        downloadBtn.className = 'btn btn-download';
-                        downloadBtn.style.cssText = 'margin-left: auto; margin-right: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;';
-                        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Descargar';
-                        
-                        downloadBtn.addEventListener('click', downloadCV);
-                        
-                        // Insertar antes del botón de cerrar
-                        const closeBtn = document.getElementById('closePortfolioPdfModal');
-                        if (closeBtn && closeBtn.parentNode) {
-                            closeBtn.parentNode.insertBefore(downloadBtn, closeBtn);
-                        }
-                    }
-                }, 100);
-            }
         }
     }
     
-    // Función para cerrar el modal (disponible globalmente)
+    // Función para cerrar el modal
     window.closePdfModal = function() {
         portfolioPdfModal.classList.remove('active');
         document.body.style.overflow = 'auto';
-        pdfIframe.src = '';
     };
+    
+    viewPdfButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const pdfId = this.getAttribute('data-pdf');
+            showPortfolioPdf(pdfId);
+        });
+    });
+    
+    pdfPreviews.forEach(preview => {
+        preview.addEventListener('click', function() {
+            const pdfId = this.getAttribute('data-pdf');
+            showPortfolioPdf(pdfId);
+        });
+    });
+    
+    if (closePortfolioPdfModal) {
+        closePortfolioPdfModal.addEventListener('click', function() {
+            closePdfModal();
+        });
+    }
+    
+    if (backToBtn) {
+        backToBtn.addEventListener('click', function() {
+            const pdfId = getCurrentPdfId();
+            if (pdfId && pdfReturnPages[pdfId]) {
+                closePdfModal();
+                showSection(pdfReturnPages[pdfId]);
+            } else {
+                closePdfModal();
+                showSection('portfolio');
+            }
+        });
+    }
+    
+    function getCurrentPdfId() {
+        const currentTitle = portfolioPdfTitle.textContent || portfolioPdfTitle.innerText;
+        for (const [id, title] of Object.entries(pdfTitles)) {
+            if (currentTitle.includes(title)) {
+                return id;
+            }
+        }
+        return null;
+    }
+    
+    portfolioPdfModal.addEventListener('click', function(e) {
+        if (e.target === portfolioPdfModal) {
+            closePdfModal();
+        }
+    });
+    
+    // Cerrar modal con tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && portfolioPdfModal.classList.contains('active')) {
+            closePdfModal();
+        }
+    });
+    
+    // Verificar archivos PDF
+    function checkFiles() {
+        console.log('Verificando archivos PDF...');
+        Object.entries(pdfFiles).forEach(([id, file]) => {
+            fetch(file)
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn(`Archivo no encontrado: ${file}`);
+                        // Mostrar advertencia en la consola
+                        console.error(`Por favor, asegúrate de que el archivo "${file}" está en la misma carpeta que el archivo HTML.`);
+                    } else {
+                        console.log(`Archivo encontrado: ${file}`);
+                    }
+                })
+                .catch(() => {
+                    console.warn(`No se pudo acceder al archivo: ${file}`);
+                    console.error(`Por favor, coloca el archivo "${file}" en la misma carpeta que el archivo HTML.`);
+                });
+        });
+    }
+    
+    checkFiles();
+});
+// ===== FUNCIONALIDAD PARA DESCARGAR CV =====
+document.addEventListener('DOMContentLoaded', function() {
+    // ... código existente ...
     
     // Función para descargar el CV
     function downloadCV() {
-        const pdfFile = 'CV.pdf';
+        const pdfFile = 'CV.pdf'; // Nombre del archivo PDF
         
+        // Verificar si el archivo existe
         fetch(pdfFile)
             .then(response => {
                 if (response.ok) {
-                    // Crear enlace temporal para descarga
+                    // Crear un enlace temporal para la descarga
                     const link = document.createElement('a');
                     link.href = pdfFile;
-                    link.download = 'CV_David_Montero_Lopez.pdf';
+                    link.download = 'CV_David_Montero_Lopez.pdf'; // Nombre del archivo descargado
                     
+                    // Añadir al DOM, hacer clic y remover
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                     
-                    // Mostrar notificación
+                    // Mostrar notificación de éxito
                     showDownloadNotification('CV descargado correctamente', 'success');
                 } else {
                     throw new Error('Archivo no encontrado');
@@ -242,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    // Función para mostrar notificaciones
+    // Función para mostrar notificación de descarga
     function showDownloadNotification(message, type) {
         // Crear elemento de notificación
         const notification = document.createElement('div');
@@ -289,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Añadir al DOM
         document.body.appendChild(notification);
         
-        // Cerrar notificación
+        // Cerrar notificación al hacer clic en el botón
         closeBtn.addEventListener('click', () => {
             notification.style.animation = 'slideOut 0.3s ease-in';
             setTimeout(() => {
@@ -311,128 +372,86 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
         
-        // Añadir animaciones CSS
-        if (!document.querySelector('#notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
+        // Animaciones CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
                 }
-                @keyframes slideOut {
-                    from {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                    to {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-    
-    // Añadir eventos a los botones de ver PDF
-    viewPdfButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const pdfId = this.getAttribute('data-pdf');
-            showPortfolioPdf(pdfId);
-        });
-    });
-    
-    // Añadir eventos a las previsualizaciones
-    pdfPreviews.forEach(preview => {
-        preview.addEventListener('click', function() {
-            const pdfId = this.getAttribute('data-pdf');
-            showPortfolioPdf(pdfId);
-        });
-    });
-    
-    // Botón de cerrar modal
-    if (closePortfolioPdfModal) {
-        closePortfolioPdfModal.addEventListener('click', function() {
-            closePdfModal();
-        });
-    }
-    
-    // Botón de volver en el modal
-    if (backToBtn) {
-        backToBtn.addEventListener('click', function() {
-            const pdfId = getCurrentPdfId();
-            if (pdfId && pdfReturnPages[pdfId]) {
-                closePdfModal();
-                showSection(pdfReturnPages[pdfId]);
-            } else {
-                closePdfModal();
-                showSection('portfolio');
             }
-        });
-    }
-    
-    // Función para obtener ID del PDF actual
-    function getCurrentPdfId() {
-        const currentTitle = portfolioPdfTitle.textContent || portfolioPdfTitle.innerText;
-        for (const [id, title] of Object.entries(pdfTitles)) {
-            if (currentTitle.includes(title)) {
-                return id;
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
             }
-        }
-        return null;
+        `;
+        document.head.appendChild(style);
     }
     
-    // Cerrar modal al hacer clic fuera
-    portfolioPdfModal.addEventListener('click', function(e) {
-        if (e.target === portfolioPdfModal) {
-            closePdfModal();
-        }
-    });
-    
-    // Cerrar modal con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && portfolioPdfModal.classList.contains('active')) {
-            closePdfModal();
-        }
-    });
-    
-    // Botones de descarga
+    // Añadir evento al botón de descarga
     const downloadCvBtn = document.getElementById('downloadCvBtn');
     if (downloadCvBtn) {
         downloadCvBtn.addEventListener('click', downloadCV);
     }
     
-    const downloadCvBtnInicio = document.getElementById('downloadCvBtnInicio');
-    if (downloadCvBtnInicio) {
-        downloadCvBtnInicio.addEventListener('click', downloadCV);
-    }
-    
-    // Verificar archivos PDF
-    function checkFiles() {
-        console.log('Verificando archivos PDF...');
-        Object.entries(pdfFiles).forEach(([id, file]) => {
-            fetch(file)
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn(`Archivo no encontrado: ${file}`);
-                        console.error(`Por favor, asegúrate de que el archivo "${file}" está en la misma carpeta que el archivo HTML.`);
-                    } else {
-                        console.log(`Archivo encontrado: ${file}`);
+    // También añadir botón de descarga en el modal del CV
+    const originalShowPortfolioPdf = window.showPortfolioPdf;
+    window.showPortfolioPdf = function(pdfId) {
+        originalShowPortfolioPdf(pdfId);
+        
+        // Si es el CV, añadir botón de descarga en el modal
+        if (pdfId === 'cv') {
+            setTimeout(() => {
+                const modalHeader = document.querySelector('.portfolio-pdf-modal-header');
+                if (modalHeader) {
+                    // Verificar si ya existe el botón de descarga
+                    if (!document.getElementById('modalDownloadBtn')) {
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.id = 'modalDownloadBtn';
+                        downloadBtn.className = 'btn btn-success';
+                        downloadBtn.style.cssText = 'margin-left: auto; margin-right: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;';
+                        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Descargar';
+                        
+                        downloadBtn.addEventListener('click', downloadCV);
+                        
+                        // Insertar antes del botón de cerrar
+                        const closeBtn = document.getElementById('closePortfolioPdfModal');
+                        if (closeBtn && closeBtn.parentNode) {
+                            closeBtn.parentNode.insertBefore(downloadBtn, closeBtn);
+                        }
                     }
-                })
-                .catch(() => {
-                    console.warn(`No se pudo acceder al archivo: ${file}`);
-                    console.error(`Por favor, coloca el archivo "${file}" en la misma carpeta que el archivo HTML.`);
-                });
-        });
-    }
+                }
+            }, 100);
+        }
+    };
     
-    checkFiles();
+    // También añadir botón de descarga en la sección de inicio
+    const viewCvBtnInicio = document.querySelector('#inicio .view-pdf-btn[data-pdf="cv"]');
+    if (viewCvBtnInicio) {
+        // Crear contenedor para ambos botones
+        const buttonContainer = viewCvBtnInicio.parentNode;
+        if (buttonContainer && !buttonContainer.querySelector('#downloadCvBtnInicio')) {
+            const downloadBtnInicio = document.createElement('button');
+            downloadBtnInicio.id = 'downloadCvBtnInicio';
+            downloadBtnInicio.className = 'btn btn-download';
+            downloadBtnInicio.innerHTML = '<i class="fas fa-download"></i> Descargar CV';
+            downloadBtnInicio.style.marginTop = '1rem';
+            
+            downloadBtnInicio.addEventListener('click', downloadCV);
+            
+            // Insertar después del botón de ver CV
+            buttonContainer.appendChild(downloadBtnInicio);
+        }
+    }
 });
