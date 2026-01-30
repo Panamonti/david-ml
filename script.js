@@ -1,11 +1,12 @@
 // Navegación entre secciones
 document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del DOM
     const navButtons = document.querySelectorAll('.nav-btn');
     const sections = document.querySelectorAll('.section');
     const menuToggle = document.querySelector('.menu-toggle');
     const mainNav = document.getElementById('main-nav');
     
-    // ===== MENÚ HAMBURGUESA (AHORA SIEMPRE ACTIVO) =====
+    // ===== MENÚ HAMBURGUESA =====
     if (menuToggle) {
         menuToggle.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -60,15 +61,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // ===== NAVEGACIÓN ENTRE SECCIONES =====
     function showSection(sectionId) {
+        // Ocultar todas las secciones
         sections.forEach(section => {
             section.classList.remove('active');
         });
         
+        // Mostrar sección activa
         const activeSection = document.getElementById(sectionId);
         if (activeSection) {
             activeSection.classList.add('active');
         }
         
+        // Actualizar botones activos
         navButtons.forEach(button => {
             if (button.getAttribute('data-section') === sectionId) {
                 button.classList.add('active');
@@ -81,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
+    // Añadir eventos a los botones de navegación
     navButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -103,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewPdfButtons = document.querySelectorAll('.view-pdf-btn');
     const pdfPreviews = document.querySelectorAll('.pdf-preview');
     
+    // Datos de los PDFs
     const pdfTitles = {
         'cv': 'Curriculum Vitae - David Montero López',
         'bravon': 'Bravon - Plan de Negocio',
@@ -124,10 +130,13 @@ document.addEventListener('DOMContentLoaded', function() {
         'fitness': 'Proyecto.pdf'
     };
     
+    // Función para mostrar PDF en modal
     function showPortfolioPdf(pdfId) {
         if (pdfTitles[pdfId]) {
+            // Actualizar título
             portfolioPdfTitle.innerHTML = `<i class="fas fa-file-pdf"></i> ${pdfTitles[pdfId]}`;
             
+            // Actualizar botón de volver
             const returnPage = pdfReturnPages[pdfId];
             if (returnPage === 'curriculum') {
                 backToBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Curriculum';
@@ -135,34 +144,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 backToBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Porfolio';
             }
             
+            // Mostrar loading
             pdfLoading.classList.add('active');
             pdfIframe.style.display = 'none';
             
             const pdfFile = pdfFiles[pdfId];
             
-            // Limpiar y recargar el iframe para evitar problemas de caché
-            const newIframe = document.createElement('iframe');
-            newIframe.className = 'pdf-iframe';
-            newIframe.id = 'pdfIframe';
-            newIframe.frameBorder = '0';
-            
-            // Reemplazar el iframe existente
+            // Limpiar iframe anterior
             const oldIframe = document.getElementById('pdfIframe');
             if (oldIframe) {
-                portfolioPdfContent.removeChild(oldIframe);
+                oldIframe.src = '';
             }
-            portfolioPdfContent.appendChild(newIframe);
             
-            const updatedPdfIframe = document.getElementById('pdfIframe');
-            const updatedPdfLoading = document.getElementById('pdfLoading');
-            
-            updatedPdfIframe.onload = function() {
-                updatedPdfLoading.classList.remove('active');
-                updatedPdfIframe.style.display = 'block';
+            // Configurar nuevo iframe
+            pdfIframe.onload = function() {
+                pdfLoading.classList.remove('active');
+                pdfIframe.style.display = 'block';
             };
             
-            updatedPdfIframe.onerror = function() {
-                updatedPdfLoading.innerHTML = `
+            pdfIframe.onerror = function() {
+                pdfLoading.innerHTML = `
                     <div style="text-align: center; padding: 3rem;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #d32f2f; margin-bottom: 1.5rem;"></i>
                         <h3 style="color: var(--header-color); margin-bottom: 1.5rem; font-size: 1.5rem;">Error al cargar el porfolio</h3>
@@ -178,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Cargar el PDF
-            updatedPdfIframe.src = pdfFile;
+            pdfIframe.src = pdfFile;
             portfolioPdfModal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
@@ -206,12 +207,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Función para cerrar el modal
+    // Función para cerrar el modal (disponible globalmente)
     window.closePdfModal = function() {
         portfolioPdfModal.classList.remove('active');
         document.body.style.overflow = 'auto';
-        
-        // Limpiar iframe
         pdfIframe.src = '';
     };
     
@@ -219,21 +218,19 @@ document.addEventListener('DOMContentLoaded', function() {
     function downloadCV() {
         const pdfFile = 'CV.pdf';
         
-        // Verificar si el archivo existe
         fetch(pdfFile)
             .then(response => {
                 if (response.ok) {
-                    // Crear un enlace temporal para la descarga
+                    // Crear enlace temporal para descarga
                     const link = document.createElement('a');
                     link.href = pdfFile;
                     link.download = 'CV_David_Montero_Lopez.pdf';
                     
-                    // Añadir al DOM, hacer clic y remover
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                     
-                    // Mostrar notificación de éxito
+                    // Mostrar notificación
                     showDownloadNotification('CV descargado correctamente', 'success');
                 } else {
                     throw new Error('Archivo no encontrado');
@@ -245,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
-    // Función para mostrar notificación de descarga
+    // Función para mostrar notificaciones
     function showDownloadNotification(message, type) {
         // Crear elemento de notificación
         const notification = document.createElement('div');
@@ -292,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Añadir al DOM
         document.body.appendChild(notification);
         
-        // Cerrar notificación al hacer clic en el botón
+        // Cerrar notificación
         closeBtn.addEventListener('click', () => {
             notification.style.animation = 'slideOut 0.3s ease-in';
             setTimeout(() => {
@@ -314,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 5000);
         
-        // Añadir animaciones CSS si no existen
+        // Añadir animaciones CSS
         if (!document.querySelector('#notification-styles')) {
             const style = document.createElement('style');
             style.id = 'notification-styles';
@@ -344,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Añadir eventos a los botones de visualización de PDF
+    // Añadir eventos a los botones de ver PDF
     viewPdfButtons.forEach(button => {
         button.addEventListener('click', function() {
             const pdfId = this.getAttribute('data-pdf');
@@ -352,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Añadir eventos a las previsualizaciones de PDF
+    // Añadir eventos a las previsualizaciones
     pdfPreviews.forEach(preview => {
         preview.addEventListener('click', function() {
             const pdfId = this.getAttribute('data-pdf');
@@ -381,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Función para obtener el ID del PDF actual
+    // Función para obtener ID del PDF actual
     function getCurrentPdfId() {
         const currentTitle = portfolioPdfTitle.textContent || portfolioPdfTitle.innerText;
         for (const [id, title] of Object.entries(pdfTitles)) {
@@ -406,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Añadir eventos a los botones de descarga
+    // Botones de descarga
     const downloadCvBtn = document.getElementById('downloadCvBtn');
     if (downloadCvBtn) {
         downloadCvBtn.addEventListener('click', downloadCV);
