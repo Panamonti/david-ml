@@ -354,16 +354,19 @@
         </div>
     </footer>
 
-    <!-- Modal para visualizar PDFs -->
+    <!-- Modal para visualizar PDFs - MEJORADO PARA MÓVIL -->
     <div id="portfolioPdfModal" class="portfolio-pdf-modal">
         <div class="portfolio-pdf-modal-content">
             <div class="portfolio-pdf-modal-header">
                 <h3 id="portfolioPdfTitle" style="margin: 0; color: var(--header-color);">
                     <i class="fas fa-file-pdf"></i> Cargando porfolio...
                 </h3>
-                <div style="display: flex; gap: 1rem;">
-                    <button class="btn btn-portfolio" id="backToBtn" style="padding: 0.7rem 1.5rem; font-size: 1rem;">
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-portfolio" id="backToBtn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
                         <i class="fas fa-arrow-left"></i> Volver
+                    </button>
+                    <button id="openInNewTabBtn" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                        <i class="fas fa-external-link-alt"></i> Abrir
                     </button>
                     <button id="closePortfolioPdfModal" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-color); padding: 5px; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">
                         <i class="fas fa-times"></i>
@@ -374,9 +377,19 @@
                 <div id="pdfLoading" class="pdf-loading active">
                     <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 1.5rem;"></i>
                     <p style="font-size: 1.2rem;">Cargando porfolio...</p>
+                    <p style="font-size: 0.9rem; color: #666; margin-top: 1rem;">Si el PDF no se muestra correctamente, usa el botón "Abrir" para verlo en una nueva pestaña.</p>
                 </div>
                 
-                <iframe class="pdf-iframe" id="pdfIframe" src="" frameborder="0"></iframe>
+                <div id="pdfViewerContainer" style="width: 100%; height: 100%; overflow: auto; display: none;">
+                    <iframe class="pdf-iframe" id="pdfIframe" src="" frameborder="0" style="width: 100%; min-height: 100%;"></iframe>
+                </div>
+                
+                <!-- Opción alternativa para móvil: Visualizador mejorado -->
+                <div id="mobilePdfViewer" style="display: none; width: 100%; height: 100%;">
+                    <object id="pdfObject" data="" type="application/pdf" width="100%" height="100%">
+                        <p>Tu navegador no soporta la visualización de PDFs. <a id="pdfDirectLink" href="" target="_blank">Haz clic aquí para descargar el PDF</a>.</p>
+                    </object>
+                </div>
             </div>
         </div>
     </div>
