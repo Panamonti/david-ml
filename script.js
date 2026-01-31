@@ -5,6 +5,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.querySelector('.menu-toggle');
     const mainNav = document.getElementById('main-nav');
     
+    // ===== CONFIGURACIÓN PDF.js =====
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    
+    // Variables globales
+    let currentPdfId = null;
+    let currentPdf = null;
+    
+    // ===== DETECTAR SI ESTAMOS EN LOCAL O NETLIFY =====
+    const isLocal = window.location.protocol === 'file:';
+    const isNetlify = window.location.hostname.includes('netlify') || 
+                      window.location.hostname.includes('localhost');
+    
     // ===== MENÚ MÓVIL =====
     if (menuToggle) {
         menuToggle.addEventListener('click', function(e) {
@@ -13,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const isExpanded = mainNav.classList.contains('active');
             this.setAttribute('aria-expanded', isExpanded);
             
-            // Cambiar icono
             const icon = this.querySelector('i');
             if (isExpanded) {
                 icon.classList.remove('fa-bars');
@@ -24,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Cerrar menú al hacer clic en un enlace
         navButtons.forEach(button => {
             button.addEventListener('click', function() {
                 mainNav.classList.remove('active');
@@ -35,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Cerrar menú al hacer clic fuera
         document.addEventListener('click', function(event) {
             if (!event.target.closest('nav') && !event.target.closest('.menu-toggle')) {
                 mainNav.classList.remove('active');
@@ -46,7 +56,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Cerrar menú con tecla Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && mainNav.classList.contains('active')) {
                 mainNav.classList.remove('active');
@@ -77,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Scroll suave al inicio
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     
@@ -89,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Mostrar sección de inicio por defecto
     showSection('inicio');
     
     // ===== FUNCIONALIDAD PARA PDFs =====
@@ -97,9 +104,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const closePortfolioPdfModal = document.getElementById('closePortfolioPdfModal');
     const backToBtn = document.getElementById('backToBtn');
     const portfolioPdfTitle = document.getElementById('portfolioPdfTitle');
-    const portfolioPdfContent = document.getElementById('portfolioPdfContent');
-    const pdfIframe = document.getElementById('pdfIframe');
     const pdfLoading = document.getElementById('pdfLoading');
+    const pdfViewer = document.getElementById('pdfViewer');
     const viewPdfButtons = document.querySelectorAll('.view-pdf-btn');
     const pdfPreviews = document.querySelectorAll('.pdf-preview');
     
@@ -119,13 +125,189 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const pdfFiles = {
         'cv': 'CV.pdf',
-        'bravon': 'Bravon.pdf',
+        'bravon': 'Bravon.pdf', 
         'gumo': 'Gumo.pdf',
         'fitness': 'Proyecto.pdf'
     };
     
+    // Función para mostrar error amigable
+    function showPdfError(pdfId, pdfFile, error) {
+        let errorMessage = '';
+        
+        if (isLocal) {
+            errorMessage = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-laptop-code" style="font-size: 3rem; color: #007acc; margin-bottom: 1rem;"></i>
+                    <h3 style="color: var(--header-color); margin-bottom: 1rem; font-size: 1.5rem;">
+                        Vista previa local limitada
+                    </h3>
+                    <p style="margin-bottom: 1.5rem;">
+                        Los PDFs solo se pueden ver correctamente cuando el sitio está <strong>publicado en Netlify</strong>.
+                    </p>
+                    <div style="background: #f0f8ff; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                        <h4 style="color: #007acc; margin-bottom: 0.8rem;">📤 Para Netlify:</h4>
+                        <ol style="text-align: left; margin-left: 1.5rem;">
+                            <li>Sube todos los archivos a Netlify</li>
+                            <li>Los PDFs funcionarán automáticamente</li>
+                            <li>No necesitas configuración especial</li>
+                        </ol>
+                    </div>
+                    <p style="color: #666; font-size: 0.9rem;">
+                        <strong>Archivo:</strong> ${pdfFile}<br>
+                        Este archivo se cargará correctamente en Netlify.
+                    </p>
+                </div>
+            `;
+        } else {
+            errorMessage = `
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #d32f2f; margin-bottom: 1rem;"></i>
+                    <h3 style="color: var(--header-color); margin-bottom: 1rem; font-size: 1.5rem;">
+                        Error al cargar el PDF
+                    </h3>
+                    <p style="margin-bottom: 1rem;">
+                        No se pudo cargar: <strong>${pdfTitles[pdfId]}</strong>
+                    </p>
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                        <p><strong>Verifica en Netlify:</strong></p>
+                        <ol style="text-align: left; margin-left: 1.5rem;">
+                            <li>Que el archivo <strong>${pdfFile}</strong> esté en tu repositorio</li>
+                            <li>Que el nombre del archivo sea exacto (mayúsculas/minúsculas)</li>
+                            <li>Revisa el panel de despliegue de Netlify</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+        }
+        
+        pdfLoading.innerHTML = errorMessage + `
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button class="btn" onclick="closePdfModal()" style="background: #6c757d;">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+                ${isLocal ? '' : `
+                <button class="btn" onclick="window.location.reload()" style="background: var(--accent-color);">
+                    <i class="fas fa-redo"></i> Recargar
+                </button>
+                `}
+            </div>
+        `;
+    }
+    
+    // Función para cargar PDF
+    async function loadPDF(pdfUrl) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                pdfLoading.classList.add('active');
+                pdfViewer.classList.remove('active');
+                pdfViewer.innerHTML = '';
+                
+                // Mostrar mensaje si es local
+                if (isLocal) {
+                    setTimeout(() => {
+                        pdfLoading.querySelector('p').textContent = 'En Netlify este PDF se cargará correctamente...';
+                    }, 1000);
+                    
+                    // Simular carga para vista local
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    pdfLoading.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #00a8ff; margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--header-color); margin-bottom: 1rem; font-size: 1.5rem;">
+                                PDF disponible en Netlify
+                            </h3>
+                            <p style="margin-bottom: 1rem;">
+                                Este PDF se visualizará perfectamente una vez subido a Netlify.
+                            </p>
+                            <div style="background: #e3f2fd; padding: 1rem; border-radius: 8px; margin: 1rem 0; display: inline-block;">
+                                <strong>Archivo:</strong> ${pdfUrl}
+                            </div>
+                            <p style="margin-top: 1.5rem; color: #666;">
+                                <i class="fas fa-info-circle"></i> Sube todos los archivos a Netlify para ver los PDFs.
+                            </p>
+                        </div>
+                    `;
+                    
+                    // Añadir botón de cierre
+                    const closeBtn = document.createElement('button');
+                    closeBtn.className = 'btn';
+                    closeBtn.style.marginTop = '1.5rem';
+                    closeBtn.style.background = 'var(--accent-color)';
+                    closeBtn.innerHTML = '<i class="fas fa-check"></i> Entendido';
+                    closeBtn.onclick = closePdfModal;
+                    
+                    pdfLoading.querySelector('div').appendChild(closeBtn);
+                    
+                    return;
+                }
+                
+                // Cargar PDF real (solo en Netlify o servidor)
+                const loadingTask = pdfjsLib.getDocument({
+                    url: pdfUrl,
+                    withCredentials: false
+                });
+                
+                currentPdf = await loadingTask.promise;
+                
+                // Calcular escala responsive
+                const containerWidth = pdfViewer.clientWidth - 40;
+                const defaultPageWidth = 595;
+                const scale = Math.min((containerWidth / defaultPageWidth), 2.5);
+                
+                // Renderizar todas las páginas
+                for (let pageNum = 1; pageNum <= currentPdf.numPages; pageNum++) {
+                    const page = await currentPdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    // Contenedor de página
+                    const pageContainer = document.createElement('div');
+                    pageContainer.className = 'pdf-page';
+                    pageContainer.style.width = `${viewport.width}px`;
+                    pageContainer.style.height = `${viewport.height}px`;
+                    
+                    // Canvas
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    
+                    // Renderizar
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport
+                    }).promise;
+                    
+                    pageContainer.appendChild(canvas);
+                    pdfViewer.appendChild(pageContainer);
+                    
+                    // Actualizar loading para PDFs largos
+                    if (currentPdf.numPages > 5) {
+                        const progress = Math.round((pageNum / currentPdf.numPages) * 100);
+                        pdfLoading.querySelector('p').textContent = 
+                            `Cargando página ${pageNum} de ${currentPdf.numPages} (${progress}%)`;
+                    }
+                }
+                
+                // Mostrar PDF
+                pdfLoading.classList.remove('active');
+                pdfViewer.classList.add('active');
+                
+                resolve();
+                
+            } catch (error) {
+                console.error('Error cargando PDF:', error);
+                showPdfError(currentPdfId, pdfUrl, error);
+                reject(error);
+            }
+        });
+    }
+    
+    // Función para mostrar PDF
     function showPortfolioPdf(pdfId) {
         if (pdfTitles[pdfId]) {
+            currentPdfId = pdfId;
+            
             portfolioPdfTitle.innerHTML = `<i class="fas fa-file-pdf"></i> ${pdfTitles[pdfId]}`;
             
             const returnPage = pdfReturnPages[pdfId];
@@ -135,61 +317,55 @@ document.addEventListener('DOMContentLoaded', function() {
                 backToBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver al Porfolio';
             }
             
-            pdfLoading.classList.add('active');
-            pdfIframe.style.display = 'none';
-            
             const pdfFile = pdfFiles[pdfId];
             
-            // Limpiar y recargar el iframe para evitar problemas de caché
-            const newIframe = document.createElement('iframe');
-            newIframe.className = 'pdf-iframe';
-            newIframe.id = 'pdfIframe';
-            newIframe.frameBorder = '0';
-            
-            // Reemplazar el iframe existente
-            const oldIframe = document.getElementById('pdfIframe');
-            if (oldIframe) {
-                portfolioPdfContent.removeChild(oldIframe);
-            }
-            portfolioPdfContent.appendChild(newIframe);
-            
-            const updatedPdfIframe = document.getElementById('pdfIframe');
-            const updatedPdfLoading = document.getElementById('pdfLoading');
-            
-            updatedPdfIframe.onload = function() {
-                updatedPdfLoading.classList.remove('active');
-                updatedPdfIframe.style.display = 'block';
-            };
-            
-            updatedPdfIframe.onerror = function() {
-                updatedPdfLoading.innerHTML = `
-                    <div style="text-align: center; padding: 3rem;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #d32f2f; margin-bottom: 1.5rem;"></i>
-                        <h3 style="color: var(--header-color); margin-bottom: 1.5rem; font-size: 1.5rem;">Error al cargar el porfolio</h3>
-                        <p style="margin-bottom: 1.5rem; font-size: 1.1rem;">No se pudo cargar el porfolio "${pdfTitles[pdfId]}".</p>
-                        <p style="font-size: 1rem; color: #666; margin-bottom: 2rem;">
-                            Asegúrate de que el archivo <strong>${pdfFile}</strong> está en la misma carpeta que este archivo HTML.
-                        </p>
-                        <button class="btn" onclick="closePdfModal()">
-                            <i class="fas fa-times"></i> Cerrar
-                        </button>
-                    </div>
-                `;
-            };
-            
-            // Cargar el PDF
-            updatedPdfIframe.src = pdfFile;
+            // Abrir modal
             portfolioPdfModal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Cargar PDF
+            loadPDF(pdfFile);
+            
+            // Añadir botón de descarga si es el CV
+            if (pdfId === 'cv') {
+                addDownloadButtonToModal();
+            }
         }
     }
     
-    // Función para cerrar el modal
+    // Botón de descarga en modal
+    function addDownloadButtonToModal() {
+        const modalHeader = document.querySelector('.portfolio-pdf-modal-header');
+        const existingBtn = document.getElementById('modalDownloadBtn');
+        if (existingBtn) existingBtn.remove();
+        
+        const downloadBtn = document.createElement('button');
+        downloadBtn.id = 'modalDownloadBtn';
+        downloadBtn.className = 'btn btn-success';
+        downloadBtn.style.cssText = 'margin-left: auto; margin-right: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;';
+        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Descargar';
+        downloadBtn.addEventListener('click', downloadCV);
+        
+        const closeBtn = document.getElementById('closePortfolioPdfModal');
+        if (closeBtn && closeBtn.parentNode) {
+            closeBtn.parentNode.insertBefore(downloadBtn, closeBtn);
+        }
+    }
+    
+    // Cerrar modal
     window.closePdfModal = function() {
         portfolioPdfModal.classList.remove('active');
         document.body.style.overflow = 'auto';
+        pdfViewer.classList.remove('active');
+        pdfViewer.innerHTML = '';
+        currentPdfId = null;
+        currentPdf = null;
+        
+        const modalDownloadBtn = document.getElementById('modalDownloadBtn');
+        if (modalDownloadBtn) modalDownloadBtn.remove();
     };
     
+    // Event listeners para botones PDF
     viewPdfButtons.forEach(button => {
         button.addEventListener('click', function() {
             const pdfId = this.getAttribute('data-pdf');
@@ -205,17 +381,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     if (closePortfolioPdfModal) {
-        closePortfolioPdfModal.addEventListener('click', function() {
-            closePdfModal();
-        });
+        closePortfolioPdfModal.addEventListener('click', closePdfModal);
     }
     
     if (backToBtn) {
         backToBtn.addEventListener('click', function() {
-            const pdfId = getCurrentPdfId();
-            if (pdfId && pdfReturnPages[pdfId]) {
+            if (currentPdfId && pdfReturnPages[currentPdfId]) {
                 closePdfModal();
-                showSection(pdfReturnPages[pdfId]);
+                showSection(pdfReturnPages[currentPdfId]);
             } else {
                 closePdfModal();
                 showSection('portfolio');
@@ -223,89 +396,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function getCurrentPdfId() {
-        const currentTitle = portfolioPdfTitle.textContent || portfolioPdfTitle.innerText;
-        for (const [id, title] of Object.entries(pdfTitles)) {
-            if (currentTitle.includes(title)) {
-                return id;
-            }
-        }
-        return null;
-    }
-    
     portfolioPdfModal.addEventListener('click', function(e) {
-        if (e.target === portfolioPdfModal) {
-            closePdfModal();
-        }
+        if (e.target === portfolioPdfModal) closePdfModal();
     });
     
-    // Cerrar modal con tecla Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && portfolioPdfModal.classList.contains('active')) {
             closePdfModal();
         }
     });
     
-    // Verificar archivos PDF
-    function checkFiles() {
-        console.log('Verificando archivos PDF...');
-        Object.entries(pdfFiles).forEach(([id, file]) => {
-            fetch(file)
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn(`Archivo no encontrado: ${file}`);
-                        // Mostrar advertencia en la consola
-                        console.error(`Por favor, asegúrate de que el archivo "${file}" está en la misma carpeta que el archivo HTML.`);
-                    } else {
-                        console.log(`Archivo encontrado: ${file}`);
-                    }
-                })
-                .catch(() => {
-                    console.warn(`No se pudo acceder al archivo: ${file}`);
-                    console.error(`Por favor, coloca el archivo "${file}" en la misma carpeta que el archivo HTML.`);
-                });
-        });
-    }
+    // Redimensionar
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(function() {
+            if (portfolioPdfModal.classList.contains('active') && currentPdfId) {
+                const pdfFile = pdfFiles[currentPdfId];
+                loadPDF(pdfFile);
+            }
+        }, 250);
+    });
     
-    checkFiles();
-});
-// ===== FUNCIONALIDAD PARA DESCARGAR CV =====
-document.addEventListener('DOMContentLoaded', function() {
-    // ... código existente ...
-    
-    // Función para descargar el CV
+    // ===== FUNCIONALIDAD PARA DESCARGAR CV =====
     function downloadCV() {
-        const pdfFile = 'CV.pdf'; // Nombre del archivo PDF
+        const pdfFile = 'CV.pdf';
         
-        // Verificar si el archivo existe
         fetch(pdfFile)
             .then(response => {
                 if (response.ok) {
-                    // Crear un enlace temporal para la descarga
                     const link = document.createElement('a');
                     link.href = pdfFile;
-                    link.download = 'CV_David_Montero_Lopez.pdf'; // Nombre del archivo descargado
+                    link.download = 'CV_David_Montero_Lopez.pdf';
                     
-                    // Añadir al DOM, hacer clic y remover
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                     
-                    // Mostrar notificación de éxito
-                    showDownloadNotification('CV descargado correctamente', 'success');
+                    showDownloadNotification('✅ CV descargado correctamente', 'success');
                 } else {
                     throw new Error('Archivo no encontrado');
                 }
             })
             .catch(error => {
                 console.error('Error al descargar el CV:', error);
-                showDownloadNotification('Error al descargar el CV. Asegúrate de que el archivo CV.pdf está en la carpeta.', 'error');
+                showDownloadNotification('❌ Error al descargar el CV', 'error');
             });
     }
     
-    // Función para mostrar notificación de descarga
+    // Notificaciones
     function showDownloadNotification(message, type) {
-        // Crear elemento de notificación
         const notification = document.createElement('div');
         notification.className = `download-notification ${type}`;
         notification.innerHTML = `
@@ -316,7 +456,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </button>
         `;
         
-        // Estilos para la notificación
         notification.style.cssText = `
             position: fixed;
             top: 100px;
@@ -335,7 +474,6 @@ document.addEventListener('DOMContentLoaded', function() {
             border-left: 4px solid ${type === 'success' ? '#28a745' : '#dc3545'};
         `;
         
-        // Estilo para el botón de cerrar
         const closeBtn = notification.querySelector('.notification-close');
         closeBtn.style.cssText = `
             background: none;
@@ -347,10 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
             margin-left: auto;
         `;
         
-        // Añadir al DOM
         document.body.appendChild(notification);
         
-        // Cerrar notificación al hacer clic en el botón
         closeBtn.addEventListener('click', () => {
             notification.style.animation = 'slideOut 0.3s ease-in';
             setTimeout(() => {
@@ -360,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
         
-        // Auto-eliminar después de 5 segundos
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.style.animation = 'slideOut 0.3s ease-in';
@@ -371,75 +506,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 300);
             }
         }, 5000);
-        
-        // Animaciones CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            @keyframes slideOut {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
     }
     
-    // Añadir evento al botón de descarga
+    // Botón de descarga en sección CV
     const downloadCvBtn = document.getElementById('downloadCvBtn');
     if (downloadCvBtn) {
         downloadCvBtn.addEventListener('click', downloadCV);
     }
     
-    // También añadir botón de descarga en el modal del CV
-    const originalShowPortfolioPdf = window.showPortfolioPdf;
-    window.showPortfolioPdf = function(pdfId) {
-        originalShowPortfolioPdf(pdfId);
-        
-        // Si es el CV, añadir botón de descarga en el modal
-        if (pdfId === 'cv') {
-            setTimeout(() => {
-                const modalHeader = document.querySelector('.portfolio-pdf-modal-header');
-                if (modalHeader) {
-                    // Verificar si ya existe el botón de descarga
-                    if (!document.getElementById('modalDownloadBtn')) {
-                        const downloadBtn = document.createElement('button');
-                        downloadBtn.id = 'modalDownloadBtn';
-                        downloadBtn.className = 'btn btn-success';
-                        downloadBtn.style.cssText = 'margin-left: auto; margin-right: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;';
-                        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Descargar';
-                        
-                        downloadBtn.addEventListener('click', downloadCV);
-                        
-                        // Insertar antes del botón de cerrar
-                        const closeBtn = document.getElementById('closePortfolioPdfModal');
-                        if (closeBtn && closeBtn.parentNode) {
-                            closeBtn.parentNode.insertBefore(downloadBtn, closeBtn);
-                        }
-                    }
-                }
-            }, 100);
-        }
-    };
-    
-    // También añadir botón de descarga en la sección de inicio
+    // Botón de descarga en inicio
     const viewCvBtnInicio = document.querySelector('#inicio .view-pdf-btn[data-pdf="cv"]');
     if (viewCvBtnInicio) {
-        // Crear contenedor para ambos botones
         const buttonContainer = viewCvBtnInicio.parentNode;
         if (buttonContainer && !buttonContainer.querySelector('#downloadCvBtnInicio')) {
             const downloadBtnInicio = document.createElement('button');
@@ -447,11 +524,37 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadBtnInicio.className = 'btn btn-download';
             downloadBtnInicio.innerHTML = '<i class="fas fa-download"></i> Descargar CV';
             downloadBtnInicio.style.marginTop = '1rem';
-            
             downloadBtnInicio.addEventListener('click', downloadCV);
-            
-            // Insertar después del botón de ver CV
             buttonContainer.appendChild(downloadBtnInicio);
         }
+    }
+    
+    // Mostrar mensaje informativo si es local
+    if (isLocal) {
+        console.log(`
+        🌐 NETLIFY READY - Tu portfolio está listo para Netlify
+        
+        📁 Archivos necesarios:
+        - index.html
+        - style.css
+        - script.js
+        - CV.pdf
+        - Bravon.pdf
+        - Gumo.pdf
+        - Proyecto.pdf
+        - (imágenes .jpg/.png)
+        
+        🚀 Para publicar en Netlify:
+        1. Ve a https://app.netlify.com
+        2. Arrastra tu carpeta o conecta GitHub
+        3. ¡Listo! Los PDFs funcionarán automáticamente
+        
+        📍 En Netlify los PDFs se cargan desde: https://tudominio.netlify.app/archivo.pdf
+        `);
+        
+        // Mensaje amigable para usuario
+        setTimeout(() => {
+            showDownloadNotification('📤 Listo para Netlify - Los PDFs funcionarán al publicar', 'success');
+        }, 3000);
     }
 });

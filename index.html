@@ -354,7 +354,7 @@
         </div>
     </footer>
 
-    <!-- Modal para visualizar PDFs -->
+    <!-- Modal para visualizar PDFs con PDF.js -->
     <div id="portfolioPdfModal" class="portfolio-pdf-modal">
         <div class="portfolio-pdf-modal-content">
             <div class="portfolio-pdf-modal-header">
@@ -376,11 +376,14 @@
                     <p style="font-size: 1.2rem;">Cargando porfolio...</p>
                 </div>
                 
-                <iframe class="pdf-iframe" id="pdfIframe" src="" frameborder="0"></iframe>
+                <!-- PDF.js Viewer -->
+                <div id="pdfViewer" class="pdf-viewer"></div>
             </div>
         </div>
     </div>
 
+    <!-- PDF.js y script personalizado -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
